@@ -31,7 +31,7 @@ public class ItemMapper {
                 .build();
     }
 
-    List<ItemDto> toDto(List<Item> items) {
+    public List<ItemDto> toDto(List<Item> items) {
         final List<ItemDto> dtos = new ArrayList<>();
         for (Item item : items) {
             dtos.add(toDto(item));

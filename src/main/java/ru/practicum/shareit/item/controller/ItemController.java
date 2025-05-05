@@ -16,7 +16,7 @@ public class ItemController {
 
     @GetMapping("/{id}")
     public ItemDto getItemById(@PathVariable Long id) {
-        return itemService.findById(id).get();
+        return itemService.findById(id);
     }
 
     @GetMapping("/search")

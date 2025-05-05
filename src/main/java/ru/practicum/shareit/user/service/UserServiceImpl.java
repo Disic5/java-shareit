@@ -8,7 +8,7 @@ import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.NoSuchElementException;
 
 @RequiredArgsConstructor
 @Service
@@ -46,9 +46,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Optional<UserDto> getUserById(Long id) {
-        User user = userRepository.findById(id).get();
-        return Optional.ofNullable(userMapper.toUserDto(user));
+    public UserDto getUserById(Long id) {
+        return userRepository.findById(id).map(userMapper::toUserDto)
+                .orElseThrow(() -> new NoSuchElementException("User not found"));
     }
 
     @Override

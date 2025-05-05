@@ -14,7 +14,6 @@ import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -67,11 +66,11 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public Optional<ItemDto> findById(Long id) {
-        Item item = itemRepository
+    public ItemDto findById(Long id) {
+        return itemRepository
                 .findById(id)
+                .map(itemMapper::toDto)
                 .orElseThrow(() -> new NotFoundException("Item not found"));
-        return Optional.ofNullable(itemMapper.toDto(item));
     }
 
     @Override
