@@ -32,9 +32,18 @@ public class UserServiceImpl implements UserService {
         if (dto == null) {
             throw new IllegalArgumentException("User can't be null");
         }
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("User not found"));
+
         validationEmailNotBeNull(dto, id);
-        dto.setId(id);
-        User user = userMapper.toUser(dto);
+        if (dto.getName() != null) {
+            user.setName(dto.getName());
+        }
+
+        if (dto.getEmail() != null) {
+            user.setEmail(dto.getEmail());
+        }
+
         User updated = userRepository.save(user);
         return userMapper.toUserDto(updated);
     }
