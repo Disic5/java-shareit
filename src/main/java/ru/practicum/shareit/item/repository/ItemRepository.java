@@ -1,9 +1,9 @@
 package ru.practicum.shareit.item.repository;
 
-import org.springframework.stereotype.Repository;
-import ru.practicum.shareit.common.BaseRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 import ru.practicum.shareit.item.model.Item;
 
-@Repository
-public class ItemRepository extends BaseRepository<Item> {
+public interface ItemRepository extends JpaRepository<Item, Long> {
+
+    boolean existsByOwnerId(Long ownerId);
 }

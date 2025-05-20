@@ -1,13 +1,21 @@
 package ru.practicum.shareit.user.model;
 
+import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import ru.practicum.shareit.common.CommonIdGenerator;
+import lombok.NoArgsConstructor;
 
 @Data
 @Builder
-public class User implements CommonIdGenerator {
+@Entity
+@NoArgsConstructor
+@AllArgsConstructor
+@Table(name = "users")
+public class User {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
     @Email

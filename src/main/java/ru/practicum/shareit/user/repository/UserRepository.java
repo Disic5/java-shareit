@@ -1,9 +1,7 @@
 package ru.practicum.shareit.user.repository;
 
-import org.springframework.stereotype.Repository;
-import ru.practicum.shareit.common.BaseRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 import ru.practicum.shareit.user.model.User;
 
-@Repository
-public class UserRepository extends BaseRepository<User> {
+public interface UserRepository extends JpaRepository<User, Long> {
 }

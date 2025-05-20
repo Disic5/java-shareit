@@ -1,7 +1,9 @@
 package ru.practicum.shareit.user.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.mapper.UserMapper;
 import ru.practicum.shareit.user.model.User;
@@ -19,30 +21,39 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto addUser(UserDto dto) {
         if (dto == null) {
-            throw new IllegalArgumentException("User can't be null");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User can't be null");
         }
         validationEmail(dto, dto.getId());
         User user = userMapper.toUser(dto);
-        User userCreated = userRepository.create(user);
+        User userCreated = userRepository.save(user);
         return userMapper.toUserDto(userCreated);
     }
 
     @Override
     public UserDto updateUser(UserDto dto, Long id) {
         if (dto == null) {
-            throw new IllegalArgumentException("User can't be null");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User can't be null");
         }
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("User not found"));
+
         validationEmailNotBeNull(dto, id);
-        dto.setId(id);
-        User user = userMapper.toUser(dto);
-        User updated = userRepository.update(user);
+        if (dto.getName() != null) {
+            user.setName(dto.getName());
+        }
+
+        if (dto.getEmail() != null) {
+            user.setEmail(dto.getEmail());
+        }
+
+        User updated = userRepository.save(user);
         return userMapper.toUserDto(updated);
     }
 
     @Override
-    public boolean deleteUser(Long id) {
+    public void deleteUser(Long id) {
         getUserById(id);
-        return userRepository.delete(id);
+        userRepository.deleteById(id);
     }
 
     @Override
@@ -58,12 +69,12 @@ public class UserServiceImpl implements UserService {
 
     private void validationEmail(UserDto user, Long currentUserId) {
         if (user.getEmail() == null) {
-            throw new IllegalArgumentException("Email can't be null");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email can't be null");
         }
         boolean emailExist = userRepository.findAll().stream()
                 .anyMatch(u -> user.getEmail().equals(u.getEmail()) && !u.getId().equals(currentUserId));
         if (emailExist) {
-            throw new IllegalArgumentException("Email already exist");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email already exists");
         }
     }
 
@@ -75,7 +86,7 @@ public class UserServiceImpl implements UserService {
         boolean emailExist = userRepository.findAll().stream()
                 .anyMatch(u -> dto.getEmail().equals(u.getEmail()) && !u.getId().equals(currentUserId));
         if (emailExist) {
-            throw new IllegalArgumentException("Email already exist");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email already exists");
         }
     }
 }
