@@ -26,11 +26,12 @@ public class Booking {
     private Item item;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "booker_id")
     private User booker;
 
     private LocalDate startDate;
     private LocalDate endDate;
+
     @Enumerated(EnumType.STRING)
     private BookingStatus status;
 }
