@@ -36,7 +36,7 @@ public class ItemServiceImpl implements ItemService {
                     .orElseThrow(() -> new NotFoundException("Request not found"));
         }
         Item entity = itemMapper.toEntity(dto, owner, request);
-        itemRepository.create(entity);
+        itemRepository.save(entity);
         return itemMapper.toDto(entity);
     }
 
@@ -61,7 +61,7 @@ public class ItemServiceImpl implements ItemService {
             item.setAvailable(dto.getAvailable());
         }
 
-        Item updated = itemRepository.update(item);
+        Item updated = itemRepository.save(item);
         return itemMapper.toDto(updated);
     }
 

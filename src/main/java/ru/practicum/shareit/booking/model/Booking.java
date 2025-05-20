@@ -1,20 +1,30 @@
 package ru.practicum.shareit.booking.model;
 
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import ru.practicum.shareit.common.CommonIdGenerator;
+import lombok.NoArgsConstructor;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.model.User;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Data
 @Builder
-public class Booking implements CommonIdGenerator {
+@Entity
+@NoArgsConstructor
+@AllArgsConstructor
+@Table(name = "booking")
+public class Booking {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @ManyToOne(fetch = FetchType.LAZY)
     private Item item;
+    @ManyToOne(fetch = FetchType.LAZY)
     private User booker;
-    private LocalDateTime startDate;
-    private LocalDateTime endDate;
+    private LocalDate startDate;
+    private LocalDate endDate;
     private BookingStatus status;
 }

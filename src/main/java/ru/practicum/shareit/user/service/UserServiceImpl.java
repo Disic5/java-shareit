@@ -23,7 +23,7 @@ public class UserServiceImpl implements UserService {
         }
         validationEmail(dto, dto.getId());
         User user = userMapper.toUser(dto);
-        User userCreated = userRepository.create(user);
+        User userCreated = userRepository.save(user);
         return userMapper.toUserDto(userCreated);
     }
 
@@ -35,14 +35,14 @@ public class UserServiceImpl implements UserService {
         validationEmailNotBeNull(dto, id);
         dto.setId(id);
         User user = userMapper.toUser(dto);
-        User updated = userRepository.update(user);
+        User updated = userRepository.save(user);
         return userMapper.toUserDto(updated);
     }
 
     @Override
-    public boolean deleteUser(Long id) {
+    public void deleteUser(Long id) {
         getUserById(id);
-        return userRepository.delete(id);
+        userRepository.deleteById(id);
     }
 
     @Override
