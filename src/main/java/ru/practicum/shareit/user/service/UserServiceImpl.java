@@ -54,6 +54,7 @@ public class UserServiceImpl implements UserService {
         return userMapper.toUserDto(updated);
     }
 
+    @Transactional
     @Override
     public void deleteUser(Long id) {
         getUserById(id);
