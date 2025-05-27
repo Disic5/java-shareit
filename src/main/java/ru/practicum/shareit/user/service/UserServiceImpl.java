@@ -2,6 +2,7 @@ package ru.practicum.shareit.user.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.mapper.UserMapper;
 import ru.practicum.shareit.user.model.User;
@@ -10,39 +11,51 @@ import ru.practicum.shareit.user.repository.UserRepository;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-@RequiredArgsConstructor
 @Service
+@Transactional(readOnly = true)
+@RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
     private final UserRepository userRepository;
 
+    @Transactional
     @Override
     public UserDto addUser(UserDto dto) {
         if (dto == null) {
             throw new IllegalArgumentException("User can't be null");
         }
-        validationEmail(dto, dto.getId());
+//        validationEmail(dto, dto.getId());
         User user = userMapper.toUser(dto);
-        User userCreated = userRepository.create(user);
+        User userCreated = userRepository.save(user);
         return userMapper.toUserDto(userCreated);
     }
 
+    @Transactional
     @Override
     public UserDto updateUser(UserDto dto, Long id) {
         if (dto == null) {
             throw new IllegalArgumentException("User can't be null");
         }
-        validationEmailNotBeNull(dto, id);
-        dto.setId(id);
-        User user = userMapper.toUser(dto);
-        User updated = userRepository.update(user);
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("User not found"));
+
+        if (dto.getName() != null) {
+            user.setName(dto.getName());
+        }
+
+        if (dto.getEmail() != null) {
+            user.setEmail(dto.getEmail());
+        }
+
+        User updated = userRepository.save(user);
         return userMapper.toUserDto(updated);
     }
 
+    @Transactional
     @Override
-    public boolean deleteUser(Long id) {
+    public void deleteUser(Long id) {
         getUserById(id);
-        return userRepository.delete(id);
+        userRepository.deleteById(id);
     }
 
     @Override
@@ -54,28 +67,5 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<UserDto> getAllUsers() {
         return userMapper.toListUserDto(userRepository.findAll());
-    }
-
-    private void validationEmail(UserDto user, Long currentUserId) {
-        if (user.getEmail() == null) {
-            throw new IllegalArgumentException("Email can't be null");
-        }
-        boolean emailExist = userRepository.findAll().stream()
-                .anyMatch(u -> user.getEmail().equals(u.getEmail()) && !u.getId().equals(currentUserId));
-        if (emailExist) {
-            throw new IllegalArgumentException("Email already exist");
-        }
-    }
-
-    private void validationEmailNotBeNull(UserDto dto, Long currentUserId) {
-        String email = dto.getEmail();
-        if (email == null) {
-            return;
-        }
-        boolean emailExist = userRepository.findAll().stream()
-                .anyMatch(u -> dto.getEmail().equals(u.getEmail()) && !u.getId().equals(currentUserId));
-        if (emailExist) {
-            throw new IllegalArgumentException("Email already exist");
-        }
     }
 }
