@@ -24,7 +24,7 @@ public class UserServiceImpl implements UserService {
         if (dto == null) {
             throw new IllegalArgumentException("User can't be null");
         }
-        validationEmail(dto, dto.getId());
+//        validationEmail(dto, dto.getId());
         User user = userMapper.toUser(dto);
         User userCreated = userRepository.save(user);
         return userMapper.toUserDto(userCreated);
@@ -39,7 +39,6 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("User not found"));
 
-        validationEmailNotBeNull(dto, id);
         if (dto.getName() != null) {
             user.setName(dto.getName());
         }
@@ -68,28 +67,5 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<UserDto> getAllUsers() {
         return userMapper.toListUserDto(userRepository.findAll());
-    }
-
-    private void validationEmail(UserDto user, Long currentUserId) {
-        if (user.getEmail() == null) {
-            throw new IllegalArgumentException("Email can't be null");
-        }
-        boolean emailExist = userRepository.findAll().stream()
-                .anyMatch(u -> user.getEmail().equals(u.getEmail()) && !u.getId().equals(currentUserId));
-        if (emailExist) {
-            throw new IllegalArgumentException("Email already exists");
-        }
-    }
-
-    private void validationEmailNotBeNull(UserDto dto, Long currentUserId) {
-        String email = dto.getEmail();
-        if (email == null) {
-            return;
-        }
-        boolean emailExist = userRepository.findAll().stream()
-                .anyMatch(u -> dto.getEmail().equals(u.getEmail()) && !u.getId().equals(currentUserId));
-        if (emailExist) {
-            throw new IllegalArgumentException("Email already exists");
-        }
     }
 }
