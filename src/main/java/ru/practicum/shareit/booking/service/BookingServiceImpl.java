@@ -68,7 +68,7 @@ public class BookingServiceImpl implements BookingService {
         if (!bookerId.equals(userId) && !ownerId.equals(userId)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User does not have access to this booking");
         }
-        System.out.println("Returning booking: " + booking.getId() + ", userId: " + userId);
+
         return bookingMapper.toDto(booking);
     }
 

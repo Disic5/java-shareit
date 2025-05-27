@@ -27,6 +27,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class ItemServiceImpl implements ItemService {
     private final ItemRepository itemRepository;
@@ -37,6 +38,7 @@ public class ItemServiceImpl implements ItemService {
     private final CommentRepository commentRepository;
     private final CommentMapper commentMapper;
 
+    @Transactional
     @Override
     public ItemDto crete(ItemDto dto, Long ownerId) {
         User owner = userRepository
@@ -54,6 +56,7 @@ public class ItemServiceImpl implements ItemService {
         return itemMapper.toDto(entity);
     }
 
+    @Transactional
     @Override
     public ItemDto update(ItemDto dto, Long id, Long userId) {
         Item item = itemRepository.findById(id)
