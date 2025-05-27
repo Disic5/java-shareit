@@ -1,10 +1,8 @@
 package ru.practicum.shareit.user.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.mapper.UserMapper;
 import ru.practicum.shareit.user.model.User;
@@ -24,7 +22,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto addUser(UserDto dto) {
         if (dto == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User can't be null");
+            throw new IllegalArgumentException("User can't be null");
         }
         validationEmail(dto, dto.getId());
         User user = userMapper.toUser(dto);
@@ -36,7 +34,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto updateUser(UserDto dto, Long id) {
         if (dto == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User can't be null");
+            throw new IllegalArgumentException("User can't be null");
         }
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("User not found"));
@@ -74,12 +72,12 @@ public class UserServiceImpl implements UserService {
 
     private void validationEmail(UserDto user, Long currentUserId) {
         if (user.getEmail() == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email can't be null");
+            throw new IllegalArgumentException("Email can't be null");
         }
         boolean emailExist = userRepository.findAll().stream()
                 .anyMatch(u -> user.getEmail().equals(u.getEmail()) && !u.getId().equals(currentUserId));
         if (emailExist) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email already exists");
+            throw new IllegalArgumentException("Email already exists");
         }
     }
 
@@ -91,7 +89,7 @@ public class UserServiceImpl implements UserService {
         boolean emailExist = userRepository.findAll().stream()
                 .anyMatch(u -> dto.getEmail().equals(u.getEmail()) && !u.getId().equals(currentUserId));
         if (emailExist) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email already exists");
+            throw new IllegalArgumentException("Email already exists");
         }
     }
 }
