@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.*;
 import ru.den.shareitgateway.item.dto.CommentDto;
 import ru.den.shareitgateway.item.dto.ItemDto;
 
+import java.util.Collections;
+
 import static ru.den.shareitgateway.util.StringUtil.HEADER_USER_ID;
 
 @Controller
@@ -25,6 +27,9 @@ public class ItemController {
     public ResponseEntity<Object> searchItemByName(@RequestHeader(HEADER_USER_ID) long userId,
                                                    @RequestParam String text) {
         log.info("Search item by text '{}', userId {}", text, userId);
+        if (text == null || text.trim().isEmpty()) {
+            return ResponseEntity.ok(Collections.emptyList());
+        }
         return itemClient.searchItemByName(userId, text);
     }
 
